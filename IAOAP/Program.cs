@@ -1,6 +1,7 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿
+using System;
 using System.Threading;
+using System.Threading.Tasks;
 using SDKHrobot;
 using IAOAP;
 
@@ -20,7 +21,7 @@ namespace IAOAP
             // 建立並保留 callback delegate
             RobotCallback = Test;
             // 1. 開啟連線並註冊 callback
-            RobotHandle = HRobot.open_connection("192.168.1.3", 1, RobotCallback);
+            RobotHandle = HRobot.open_connection("192.168.1.1", 1, RobotCallback);
             if (RobotHandle < 0)
             {
                 Console.WriteLine("EntryPoint: 機器人連線失敗，程式終止");
@@ -30,32 +31,50 @@ namespace IAOAP
 
             // 2. 設定運行模式與 Override 速度
             HRobot.set_operation_mode(RobotHandle, 1);  // 自動模式
-            HRobot.set_override_ratio(RobotHandle, 10); // 覆蓋比例 20%
-            Console.WriteLine("EntryPoint: 自動模式啟用，Override Ratio=20");
+            HRobot.set_override_ratio(RobotHandle, 10); // 覆蓋比例 10%
+            Console.WriteLine("EntryPoint: 自動模式啟用，Override Ratio=10");
 
-            // 3. 設定 PTP 和直線運動速度
-            HRobot.set_ptp_speed(RobotHandle, 10);    // PTP 速度比 50%
+            // 3. 設定全局 PTP 和直線運動速度
+            HRobot.set_ptp_speed(RobotHandle, 50);    // PTP 速度比 50%
             HRobot.set_lin_speed(RobotHandle, 200);   // 直線運動速度 200 mm/s
             Console.WriteLine("EntryPoint: PTP speed=50%, Linear speed=200mm/s");
 
             const int udpPort = 9999;
 
-            // 4. 模式 A 與 模式 B 交替運行：各持續15分鐘
+            // 4. 模式 A 與 模式 B 交替運行，各持續 15 分鐘
             while (true)
             {
-                // 模式 A：隨機執行 Drill 動作
+                // --- 模式 A ---
                 Console.WriteLine("EntryPoint: 切換至 模式A，持續 15 分鐘");
-                var startA = DateTime.Now;
+                // 在模式 A 開始前，清空任何殘留命令
+                HRobot.motion_abort(RobotHandle);
+                while (HRobot.get_command_count(RobotHandle) != 0)
+                {
+                    Thread.Sleep(1);
+                }
+
+                DateTime startA = DateTime.Now;
                 while (DateTime.Now - startA < TimeSpan.FromMinutes(15))
                 {
                     Drill_movement.ExecuteRandom(RobotHandle);
                 }
-                Console.WriteLine("EntryPoint: 模式A 結束，切換至 模式B");
+                Console.WriteLine("EntryPoint: 模式A 完成，切換至 模式B");
 
-                // 模式 B：UDP 監聽與 PoseSequences
+                // --- 模式 B ---
                 Console.WriteLine($"EntryPoint: 切換至 模式B，UDP 監聽 Port={udpPort}，持續 15 分鐘");
-                PoseSequences.StartListener(udpPort, RobotHandle);
-                Console.WriteLine("EntryPoint: 模式B 結束，準備下次切換");
+                // 非阻塞啟動 PoseSequences 監聽
+                Task listenerTask = Task.Run(() => PoseSequences.StartListener(udpPort, RobotHandle));
+                // 等待 15 分鐘
+                Thread.Sleep(TimeSpan.FromMinutes(15));
+                Console.WriteLine("EntryPoint: 模式B 時間到，停止監聽並切換");
+                // 若需要可在此呼叫 StopListener
+                // PoseSequences.StopListener();
+
+                // 確保任務結束再迴圈
+                if (!listenerTask.IsCompleted)
+                {
+                    listenerTask.Wait();
+                }
             }
         }
 
@@ -67,3 +86,4 @@ namespace IAOAP
         }
     }
 }
+
