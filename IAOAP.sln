@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35828.75
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAOAP", "IAOAP\IAOAP.csproj", "{805552CB-226D-4262-B41D-654AFAAF0966}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "方案項目", "方案項目", "{8DDC4786-5FC8-F15C-1CA5-9F41FD4BEB75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{805552CB-226D-4262-B41D-654AFAAF0966}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{805552CB-226D-4262-B41D-654AFAAF0966}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{805552CB-226D-4262-B41D-654AFAAF0966}.Debug|x64.ActiveCfg = Debug|x64
+		{805552CB-226D-4262-B41D-654AFAAF0966}.Debug|x64.Build.0 = Debug|x64
+		{805552CB-226D-4262-B41D-654AFAAF0966}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{805552CB-226D-4262-B41D-654AFAAF0966}.Release|Any CPU.Build.0 = Release|Any CPU
+		{805552CB-226D-4262-B41D-654AFAAF0966}.Release|x64.ActiveCfg = Release|x64
+		{805552CB-226D-4262-B41D-654AFAAF0966}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E5D650D-0775-4C58-9255-F4E435F7D171}
+	EndGlobalSection
+EndGlobal
