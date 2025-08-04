@@ -21,7 +21,7 @@ namespace IAOAP
             // 建立並保留 callback delegate
             RobotCallback = Test;
             // 1. 開啟連線並註冊 callback
-            RobotHandle = HRobot.open_connection("192.168.1.1", 1, RobotCallback);
+            RobotHandle = HRobot.open_connection("192.168.50.90", 1, RobotCallback);
             if (RobotHandle < 0)
             {
                 Console.WriteLine("EntryPoint: 機器人連線失敗，程式終止");

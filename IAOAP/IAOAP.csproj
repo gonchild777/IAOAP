@@ -73,7 +73,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Drill_movement.cs" />
+    <Compile Include="..\..\Drill_movement.cs">
+      <Link>Drill_movement.cs</Link>
+    </Compile>
     <Compile Include="HRobot.cs" />
     <Compile Include="PoseSequences.cs" />
     <Compile Include="Program.cs" />

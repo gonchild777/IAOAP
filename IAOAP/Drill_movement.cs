@@ -1,17 +1,15 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using SDKHrobot;
-using IAOAP;
 
 namespace IAOAP
 {
     /// <summary>
     /// 模式A專用：隨機選擇並執行預先定義的機械手臂動作序列，
     /// 並從 J1List 隨機抽取且不重複的第一軸角度，
-    /// 每個姿態可自訂對應的 PTP 速度，並使用事件驅動等待
+    /// 每個姿態可自訂對應的 PTP 速度，並在第4與第6動作時控制 DO8
     /// </summary>
     public static class Drill_movement
     {
@@ -65,10 +63,9 @@ namespace IAOAP
         /// </summary>
         public static void ExecuteRandom(int handle)
         {
-            // (可選) 清空殘留命令，若 EntryPoint 已處理可移除此段
-            HRobot.motion_abort(handle);
-            while (HRobot.get_command_count(handle) != 0)
-                Thread.Sleep(1);
+            // 設定 DO8 為數位輸出並保存
+            HRobot.set_SO_array(handle, new int[] { 8 }, new int[] { 0 }, 1);
+            HRobot.save_module_io_setting(handle);
 
             // 初始化或重置 J1 候選
             if (_j1Pairs == null || _nextIndex >= _j1Pairs.Count)
@@ -99,21 +96,28 @@ namespace IAOAP
 
             for (int i = 0; i < poses.Count; i++)
             {
+                // 在第4步前開 DO8
+                if (i == 3)
+                {
+                    HRobot.set_SO_array(handle, new int[] { 8 }, new int[] { 1 }, 1);
+                    Console.WriteLine("Drill_movement: DO8 已開啟");
+                }
+                // 在第6步後關 DO8
+                if (i == 5)
+                {
+                    HRobot.set_SO_array(handle, new int[] { 8 }, new int[] { 0 }, 1);
+                    Console.WriteLine("Drill_movement: DO8 已關閉");
+                }
+
                 var template = poses[i];
                 double[] joints = new double[6]
                 {
                     randJ1,
-                    template[1],
-                    template[2],
-                    template[3],
-                    template[4],
-                    template[5]
+                    template[1], template[2], template[3], template[4], template[5]
                 };
 
-                // 設定 PTP 速度
+                // 設定 PTP 速度並啟動動作
                 HRobot.set_ptp_speed(handle, speeds[i]);
-
-                // 使用事件等待機械臂完成動作
                 PoseSequences.MotionDoneEvent.Reset();
                 int ret = HRobot.ptp_axis(handle, 0, joints);
                 if (ret != 0)
@@ -122,6 +126,7 @@ namespace IAOAP
                     continue;
                 }
 
+                // 等待完成
                 PoseSequences.MotionDoneEvent.WaitOne();
                 Console.WriteLine($"Drill_movement: 完成 {i + 1}/{poses.Count}");
             }
@@ -130,4 +135,3 @@ namespace IAOAP
         }
     }
 }
-
