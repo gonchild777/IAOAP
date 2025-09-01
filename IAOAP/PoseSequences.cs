@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
@@ -169,7 +170,86 @@ namespace IAOAP
                 int count = zoneData.PeopleCount;
                 string key = count > 3 ? "more-than-3" : $"{count}-{zone}";
 
-                if (Sequences.TryGetValue(key, out var seqList))
+
+
+                string SoundPC_IP = "192.168.1.154";// "10.13.10.131";// "192.168.1.154";
+                int SoundPC_port = 8082;
+                string LightPC_IP = "192.168.1.99";
+                int LightPC_port = 9897;
+
+                switch (count)
+                {
+                    case 1:
+                        switch (zone)
+                        {
+                            case "A":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "C");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "C");
+                                break;
+                            case "B":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "D");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "D");
+                                break;
+                            case "C":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "E");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "E");
+                                break;
+                            case "D":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "F");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "F");
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (zone)
+                        {
+                            case "A":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "G");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "G");
+                                break;
+                            case "B":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "H");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "H");
+                                break;
+                            case "C":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "I");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "I");
+                                break;
+                            case "D":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "J");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "J");
+                                break;
+                        }
+                        break;
+                    case 3:
+                        switch (zone)
+                        {
+                            case "A":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "K");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "K");
+                                break;
+                            case "B":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "L");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "L");
+                                break;
+                            case "C":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "M");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "M");
+                                break;
+                            case "D":
+                                UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "N");
+                                UdpSender.SendMessage(LightPC_IP, LightPC_port, "N");
+                                break;
+                        }
+                        break;
+                    default:
+                        UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "O");
+                        UdpSender.SendMessage(LightPC_IP, LightPC_port, "O");
+                        break;
+                }
+
+
+            if (Sequences.TryGetValue(key, out var seqList))
                 {
                     Console.WriteLine($"ExecuteSequences: 模式 {key}，觸發 {seqList.Count} 組姿態");
                     ExecuteZone(seqList, handle);
@@ -202,7 +282,8 @@ namespace IAOAP
                 string json = Encoding.UTF8.GetString(buffer);
                 Console.WriteLine($"StartListener: 收到 UDP 資料: {json}");
 
-                try
+
+            try
                 {
                     var regions = JsonConvert.DeserializeObject<List<Region>>(json);
                     ExecuteSequences(regions, handle);

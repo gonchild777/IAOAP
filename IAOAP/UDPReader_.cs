@@ -97,8 +97,6 @@ namespace IAOAP
                     // count == 0，跳過
                     continue;
                 }
-
-                Console.WriteLine($"區域 {zone} 偵測到 {count} 人 → 檔名：{filename}");
             }
         }
     }
