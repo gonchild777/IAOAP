@@ -6,8 +6,9 @@ using IAOAP;
 
 namespace IAOAP
 {
-    public class EntryPoint
+    public class EntryPoint                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
     {
+        public static int ATime =15; //0 slent mode; 15 nomode
         public static string SoundPC_IP = "192.168.1.154";
         public static int SoundPC_port = 8082;
         public static string LightPC_IP = "192.168.1.99";
@@ -60,7 +61,7 @@ namespace IAOAP
                     Thread.Sleep(1);
 
                 DateTime startA = DateTime.Now;
-                while (DateTime.Now - startA < TimeSpan.FromMinutes(15))
+                while (DateTime.Now - startA < TimeSpan.FromMinutes(ATime))
                 {
                     Drill_movement.ExecuteRandom(RobotHandle);
                 }
@@ -70,7 +71,7 @@ namespace IAOAP
                 Console.WriteLine($"EntryPoint: 切換至 模式B，UDP 監聽 Port={ListenPort}，持續 15 分鐘");
 
                 // 設定 Override 為模式 B 的值（例如 20%）
-                HRobot.set_override_ratio(RobotHandle, 20);
+                HRobot.set_override_ratio(RobotHandle, 30);
                 Console.WriteLine("EntryPoint: 模式B Override Ratio 設定為 20");
 
                 UdpSender.SendMessage(SoundPC_IP, SoundPC_port, "B");
